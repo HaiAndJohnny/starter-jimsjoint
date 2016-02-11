@@ -87,13 +87,24 @@ class Order extends Application {
         $this->data['pagebody'] = 'show_order';
         $this->data['order_num'] = $order_num;
         //FIXME
+        $this->data['total'] = number_format($this->orders->total($order_num), 2);
 
+        $items = $this->orderitems->group($order_num);
+        foreach ($items as $item) {
+            $menuitem = $this->menu->get($item->item);
+            $item->code = $menuitem->name;
+        }
+        $this->data['items'] = $items;
+        
+        if(!$this->orders->validate($order_num))
+            $this->data['okornot'] = "disabled";   
         $this->render();
     }
 
     // proceed with checkout
     function proceed($order_num) {
         //FIXME
+
         redirect('/');
     }
 
